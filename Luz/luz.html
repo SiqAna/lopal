@@ -1,0 +1,40 @@
+<!DOCTYPE html> 
+<html> 
+	<body>
+		<h2>O que o JavaScript pode fazer</h2>
+		<p>O JavaScript pode alterar atributos HTML</p>
+		<p>
+			Neste caso o JavaScript muda o valor do 
+			atributo src (source) de uma imagem.
+		</p>
+
+		<button onclick="document.getElementById('minhaImagem').src=
+			'luz_ligada.png'">Ligar a luz</button>
+
+		<img id="minhaImagem" src="luz_desligada.png" style="width:120px">
+
+		<button onclick="document.getElementById('minhaImagem').src=
+			'luz_desligada.png'">Desligar a luz</button>
+
+
+
+		<button onclick="document.getElementById('minhaimagem').src=
+			'torneira_aberta.png'">Abrir torneira</button>
+		<img id="minhaimagem" src="torneira_fechada.png" style="width:120px">
+
+		<button onclick="document.getElementById('minhaimagem').src=
+			'torneira_fechada.png'">Fechar torneira</button>
+
+
+		<button onclick="document.getElementById('mimagem').src=
+			'gato.jpg'">Adotar gato</button>
+		<img id="mimagem" src="cachorro.jpg" style="width:120px">
+
+		<button onclick="document.getElementById('mimagem').src=
+			'cachorro.jpg'">Adotar cachorro</button>
+
+
+
+	</body> 
+</html>
+

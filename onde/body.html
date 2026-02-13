@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript no body</title>
+</head>
+<body>
+    <h2>Exemplo de JavaScript no body</h2>
+    <p id="demo">Este é um parágrafo legal.</p>
+    <button type="button" style="width:150px; height: 100px;color: rgb(252, 51, 135);border-color: deeppink;background-color: lightpink;" onclick="minhaFunc()">Clique aqui!</button>
+    <script>
+        function minhaFunc(){
+            document.getElementById("demo").innerHTML = "Esse é um parágrafo ilegal.";
+        }
+    </script>
+</body>
+</html>
