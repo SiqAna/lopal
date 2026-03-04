@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pong!</title>
+
+<style>
+
+body{
+    background:rgb(255, 188, 222);
+    color:white;
+    text-align:center;
+    font-family:Arial;
+}
+
+canvas{
+    background:black;
+    border:3px solid white;
+}
+
+#placar{
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+#contador{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:80px;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Pong</h1>
+
+<div id="placar">
+Jogador: <span id="playerScore">0</span> |
+IA: <span id="aiScore">0</span>
+</div>
+
+<div id="contador"></div>
+
+<canvas id="game" width="600" height="400"></canvas>
+
+<script>
+
+function calculadora(){
+
+const canvas = document.getElementById("game")
+const ctx = canvas.getContext("2d")
+
+let playerScore = 0
+let aiScore = 0
+let gamePaused = false
+
+let ball = {
+    x:300,
+    y:200,
+    radius:8,
+    speedX:4,
+    speedY:4
+}
+
+let player = {
+    x:10,
+    y:160,
+    width:10,
+    height:80,
+    speed:20
+}
+
+let ai = {
+    x:580,
+    y:160,
+    width:10,
+    height:80
+}
+
+function drawRect(x,y,w,h){
+    ctx.fillStyle="white"
+    ctx.fillRect(x,y,w,h)
+}
+
+function drawBall(){
+    ctx.beginPath()
+    ctx.arc(ball.x,ball.y,ball.radius,0,Math.PI*2)
+    ctx.fillStyle="white"
+    ctx.fill()
+}
+
+function startCountdown(){
+
+    let contador = document.getElementById("contador")
+    let tempo = 3
+    gamePaused = true
+
+    contador.textContent = tempo
+
+    let interval = setInterval(function(){
+
+        tempo--
+
+        if(tempo > 0){
+            contador.textContent = tempo
+        }else{
+            contador.textContent = ""
+            gamePaused = false
+            clearInterval(interval)
+        }
+
+    },1000)
+}
+
+function resetBall(){
+    ball.x = 300
+    ball.y = 200
+    ball.speedX *= -1
+    startCountdown()
+}
+
+function moveBall(){
+
+    if(gamePaused) return
+
+    ball.x += ball.speedX
+    ball.y += ball.speedY
+
+    if(ball.y < 0 || ball.y > canvas.height){
+        ball.speedY *= -1
+    }
+
+    if(
+        ball.x < player.x + player.width &&
+        ball.y > player.y &&
+        ball.y < player.y + player.height
+    ){
+        ball.speedX *= -1
+    }
+
+    if(
+        ball.x > ai.x &&
+        ball.y > ai.y &&
+        ball.y < ai.y + ai.height
+    ){
+        ball.speedX *= -1
+    }
+
+    if(ball.x < 0){
+        aiScore++
+        document.getElementById("aiScore").textContent = aiScore
+        resetBall()
+    }
+
+    if(ball.x > canvas.width){
+        playerScore++
+        document.getElementById("playerScore").textContent = playerScore
+        resetBall()
+    }
+
+    ai.y += (ball.y - (ai.y + ai.height/2)) * 0.08
+}
+
+document.addEventListener("keydown",function(e){
+
+if(e.key === "ArrowUp"){
+    player.y -= player.speed
+}
+
+if(e.key === "ArrowDown"){
+    player.y += player.speed
+}
+
+})
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+drawRect(player.x,player.y,player.width,player.height)
+drawRect(ai.x,ai.y,ai.width,ai.height)
+
+drawBall()
+
+}
+
+function gameLoop(){
+moveBall()
+draw()
+}
+
+startCountdown()
+setInterval(gameLoop,1000/60)
+
+}
+
+calculadora()
+
+</script>
+
+</body>
+</html>
