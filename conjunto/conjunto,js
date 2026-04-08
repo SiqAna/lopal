@@ -4,9 +4,14 @@ function conjunto(){
     letras.add("b")
     letras.add("c")
 
-    console.log (letras.has("a"))
+    //delete 
 
-    
+    letras.delete("c")
+    console.log(letras)
+
+    for(const x of letras.keys()){
+        console.log(x)
+    }
 
 }
 conjunto();
