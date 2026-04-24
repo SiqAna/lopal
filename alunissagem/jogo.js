@@ -13,6 +13,22 @@ let canvas = document.querySelector("#jogo");
 let contexto = canvas.getContext("2d");
 let lancamento = (Math.round (Math.random()) == 0); //variável booleana aleatória
 
+let imgFogueteOff = new Image();
+imgFogueteOff.src = "foguete.png";
+
+let imgFogueteOn = new Image();
+imgFogueteOn.src = "fogueteFogo.png";
+
+let imgFogueteOffPronta = false;
+let imgFogueteOnPronta = false;
+
+imgFogueteOff.onload = () => imgFogueteOffPronta = true;
+imgFogueteOn.onload = () => imgFogueteOnPronta = true;
+
+document.body.style.fontFamily = "'Press Start 2P', monospace"
+
+let offset = 40; //offset para o módulo lunar não ultrapassar a borda do canvas
+
 let estrelas = [];
 for (let i = 0; i < 500; i++){
     estrelas[i] = {
@@ -31,8 +47,8 @@ let modulolunar = {
     y: 100
 },
 angulo: lancamento ? -Math.PI/2 : Math.PI/2,
-largura: 20,
-altura: 20,
+largura: 100,
+altura: 100,
 cor: "pink",
 velocidade:{
     x: lancamento ? 2 : -2,
@@ -45,7 +61,7 @@ rotacaoHorario: false
 }
 
 function mostrarCombustivel(){
-    contexto.font = "Bold 18px Arial";
+    contexto.font = "13px 'Press Start 2P'";
     contexto.textAlign = "left";
     contexto.testBaseline = "middle";
     contexto.fillStyle = "white";
@@ -71,12 +87,12 @@ function mostrarVelocidadeHorizontal(){
 function mostrarAltitude(){
     mostrarIndicador(
         `Altitude: ${(canvas.height - modulolunar.posicao.y - 0.5 * 
-        modulolunar.altura).toFixed(2)}`,
-    400, 
+        modulolunar.altura).toFixed(0)}m`,
+    500, 
     60)
 }
 function mostrarIndicador(mensagem, x, y){
-     contexto.font = "Bold 18px Arial";
+    contexto.font = "13px 'Press Start 2P'";
     contexto.textAlign = "left";
     contexto.textBaseline = "middle";
     contexto.fillStyle = "white";
@@ -92,7 +108,7 @@ function mostrarIndicador(mensagem, x, y){
 function mostrarAngulo(){
     mostrarIndicador(
         `Angulo: ${(modulolunar.angulo * 100 / Math.PI).toFixed(0)}`,
-    400, 
+    500, 
     40)
 }
 
@@ -132,24 +148,43 @@ function desenharEstrelas(){
 }
 
 function desenharModuloLunar(){
+    /*contexto.clearRect(
+            modulolunar.posicao.x - modulolunar.altura/2,
+            modulolunar.posicao.y - modulolunar.altura/2,
+            modulolunar.largura,
+            modulolunar.altura
+    )*/
 
     contexto.save();
-    contexto.beginPath();
+    //contexto.beginPath();
     contexto.translate(modulolunar.posicao.x, modulolunar.posicao.y);
     contexto.rotate(modulolunar.angulo);
 
-    contexto.rect(modulolunar.largura * -0.5, modulolunar.altura * -0.5,
+    /*contexto.rect(modulolunar.largura * -0.5, modulolunar.altura * -0.5,
     modulolunar.largura, modulolunar.altura);
-    contexto.fillStyle = modulolunar.cor;
-    contexto.fill();
+    contexto.fillStyle = modulolunar.cor;*/
 
-    contexto.closePath();
+    //contexto.closePath();
 
+    let spriteAtual;
 
     if(modulolunar.motorLigado == true && modulolunar.combustível > 0){
-        desenharchama();
+        spriteAtual = imgFogueteOn;
         consumirCombustível();
+    } else {
+        spriteAtual = imgFogueteOff
     }
+
+    if (imgFogueteOffPronta && imgFogueteOnPronta) {
+        contexto.drawImage(
+            spriteAtual, 
+            -modulolunar.largura * 0.5, 
+            -modulolunar.altura * 0.5, 
+            modulolunar.largura, 
+            modulolunar.altura
+        );
+    }
+
      contexto.restore();
     
 }
@@ -167,6 +202,12 @@ function desenharchama(){
 }
 
 function desenhar(){
+    
+    if (encerrarJogo()){
+        modulolunar.motorLigado = false;
+        desenharModuloLunar();
+        return;
+    }
 
     atracaoGravitacional();
     desenharEstrelas();
@@ -178,9 +219,6 @@ function desenhar(){
     mostrarAngulo();
     
 
-    if (encerrarJogo()){
-        return
-    }
 
     /*if(modulolunar.posicao.y > canvas.height -modulolunar.altura * 0.5 ){
         if(modulolunar.velocidade.y <= 0.5 && 
@@ -199,22 +237,24 @@ function desenhar(){
 
 }
 function encerrarJogo(){
-        if (modulolunar.posicao.y > canvas.height -modulolunar.altura * 0.5 ){
-            if(modulolunar.velocidade.y <= 0.5 && 
-            Math.abs (modulolunar.velocidade.x) <= 0.5 && 
-            Math.abs (modulolunar.angulo) <= 5){
-            mostrarResultado("Você pousou com sucesso! +1000 créditos sociais✅", cor = "White");
+    if (modulolunar.posicao.y > canvas.height -(modulolunar.altura - offset) * 0.5){
+        if(modulolunar.velocidade.y <= 0.5 && 
+        Math.abs (modulolunar.velocidade.x) <= 0.5 && 
+        Math.abs (modulolunar.angulo) <= 5){
+        mostrarResultado("Você pousou com sucesso! +1000 créditos sociais✅", cor = "White");
+        spriteAtual = imgFogueteOff;
         //você ganhou
         } else {
-            mostrarResultado("Você morreu betinha -1000 aura", cor = "white");
+        mostrarResultado("Você morreu betinha -1000 aura", cor = "white");
         //você perdeu
+        spriteAtual = imgFogueteOff;
         }
         return true;
     }
     return false;
 }
 function mostrarResultado(mensagem,cor){
-    contexto.font = "Bold, 40px Calibri";
+    contexto.font = "15px 'Press Start 2P'";
     contexto.textAlign = "center";
     contexto.textBaseline = "middle";
     contexto.fillStyle = cor;
